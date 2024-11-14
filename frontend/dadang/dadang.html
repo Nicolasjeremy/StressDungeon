@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Lab - Dadang</title>
+    <link rel="stylesheet" href="dadang.css">
+</head>
+<body>
+    <header>
+        <h1>Virtual Lab: Simulasi Tumbukan</h1>
+        <p id="coin-display">Coins: 0</p>
+    </header>
+    <main>
+        <section id="controls">
+            <h2>Kontrol Percobaan</h2>
+            <label for="mass1">Massa Objek 1, biru (kg):</label>
+            <input type="number" id="mass1" value="2">
+            <br>
+            <label for="velocity1">Kecepatan Objek 1 (m/s):</label>
+            <input type="number" id="velocity1" value="5">
+            <br>
+            <label for="mass2">Massa Objek 2, merah (kg):</label>
+            <input type="number" id="mass2" value="3">
+            <br>
+            <label for="velocity2">Kecepatan Objek 2 (m/s):</label>
+            <input type="number" id="velocity2" value="0">
+            <br>
+            <label for="collision-type">Jenis Tumbukan:</label>
+            <select id="collision-type">
+                <option value="elastic">Elastis</option>
+                <option value="inelastic">Tidak Elastis</option>
+            </select>
+            <br>
+            <button id="simulate">Mulai Simulasi</button>
+        </section>
+
+        <section id="visualization">
+            <h2>Visualisasi Simulasi</h2>
+            <canvas id="collisionCanvas" width="800" height="200"></canvas>
+        </section>
+        
+        <section id="results">
+            <h2>Hasil Simulasi</h2>
+            <p>Momentum Sebelum: <span id="momentum-before">0</span> kg·m/s</p>
+            <p>Momentum Sesudah: <span id="momentum-after">0</span> kg·m/s</p>
+            <p>Energi Kinetik Sebelum: <span id="energy-before">0</span> J</p>
+            <p>Energi Kinetik Sesudah: <span id="energy-after">0</span> J</p>
+        </section>
+    </main>
+    <footer>
+        <button id="back-to-selection">Kembali ke Hero Selection</button>
+    </footer>
+    <script src="dadang.js"></script>
+</body>
+</html>

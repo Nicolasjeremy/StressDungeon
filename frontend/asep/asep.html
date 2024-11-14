@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Virtual Lab - Asep</title>
+        <link rel="stylesheet" href="asep.css">
+    </head>
+    <body>
+        <header>
+            <h1>Virtual Lab: Peluncuran Panah Asep</h1>
+            <p id="coin-display">Coins: 0</p>
+        </header>
+        <main>
+            <section id="controls">
+                <h2>Kontrol Percobaan</h2>
+                <label for="velocity">Kecepatan Awal (m/s):</label>
+                <input type="number" id="velocity" value="20">
+                <br>
+                <label for="angle">Sudut Peluncuran (°):</label>
+                <input type="number" id="angle" value="45">
+                <br>
+                <label for="gravity">Gravitasi (m/s²):</label>
+                <input type="number" id="gravity" value="9.8">
+                <br>
+                <label for="target-distance">Target Jarak (5m margin): </label>
+                <span id="target-distance-display"></span>
+                <br>            
+                <br>
+                <button id="simulate">Mulai Simulasi</button>
+            </section>
+            <section id="visualization">
+                <h2>Hasil Simulasi</h2>
+                <canvas id="simulationCanvas" width="800" height="400"></canvas>
+                <div id="results">
+                    <p>Jarak Maksimum: <span id="max-distance">0</span> m</p>
+                    <p>Waktu Total: <span id="total-time">0</span> s</p>
+                    <p>Tinggi Maksimum: <span id="max-height">0</span> m</p>
+                </div>
+            </section>
+        </main>
+        <footer>
+            <button id="back-to-selection">Kembali ke Hero Selection</button>
+        </footer>
+        
+        <script src="asep.js"></script>
+    </body>
+</html>

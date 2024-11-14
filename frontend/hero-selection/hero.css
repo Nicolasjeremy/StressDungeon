@@ -1,0 +1,60 @@
+/* General reset */
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    background-image: url("heroselectBackground.svg");
+    background-size: cover;
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent the background image from repeating */
+}
+
+
+header {
+    background-color: transparent;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.733);
+    font-size: larger;
+}
+
+/* Hero content container */
+#hero-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px;
+    gap: 20px;
+}
+
+/* Hero card styles */
+.hero-card {
+    flex: 1 1 calc(25% - 40px); /* Adjust for a 4-column layout */
+    max-width: 300px; /* Optional: Limit card width */
+    text-align: center;
+    padding: 20px;
+    background-color: rgba(205, 254, 57, 0.759);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: none; /* Remove default button border */
+    cursor: pointer; /* Pointer cursor for buttons */
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.701);
+    
+}
+
+.hero-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+/* Hover effects on the card being hovered */
+.hero-card:hover {
+    transform: scale(1.05); /* Slightly enlarge the card on hover */
+    z-index: 1;
+}

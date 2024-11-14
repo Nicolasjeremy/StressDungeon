@@ -1,0 +1,87 @@
+/* Reset body styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+/* Header styles */
+header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Dashboard layout */
+#dashboard-content {
+    background-color: #45a049;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    gap: 20px;
+    min-height: 100vh; /* Adjust for header/footer height */
+    box-sizing: border-box;
+}
+
+/* Left and right sections */
+#left-content {
+    flex: 1; /* Takes 1 part */
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#right-content {
+    flex: 3; /* Takes 3 parts */
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Profile picture */
+#profile-picture {
+    text-align: center
+}
+#profile-picture img {
+    border-radius: 50%;
+    border: 3px solid #4CAF50;
+}
+
+/* Stat description */
+#stat-description {
+    text-align: center;
+}
+#stat-description h2 {
+    margin-bottom: 10px;
+}
+
+/* Right content sections */
+#description, #streak {
+    margin-bottom: 20px;
+}
+#streak {
+    text-align: center;
+}
+
+/* Footer with logout button */
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #4CAF50;
+}
+footer button {
+    background-color: white;
+    color: #4CAF50;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+footer button:hover {
+    background-color: #45a049;
+    color: white;
+}

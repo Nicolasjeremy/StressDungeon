@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Lab - Hendra</title>
+    <link rel="stylesheet" href="hendra.css">
+</head>
+<body>
+    <header>
+        <h1>Virtual Lab: Gaya Dorong Perisai</h1>
+        <p id="coin-display">Coins: 0</p>
+    </header>
+    <main>
+        <section id="controls">
+            <h2>Kontrol Simulasi</h2>
+            <label for="force">Gaya Dorong (N):</label>
+            <input type="number" id="force" value="200">
+            <br>
+            <label for="mass">Massa Perisai (kg):</label>
+            <input type="number" id="mass" value="50">
+            <br>
+            <label for="surface">Jenis Permukaan:</label>
+            <select id="surface">
+                <option value="0.1">Licin (μ = 0.1)</option>
+                <option value="0.5">Berbatu (μ = 0.5)</option>
+                <option value="1.0">Kasar (μ = 1.0)</option>
+            </select>
+            <br>
+            <button id="simulate">Mulai Simulasi</button>
+        </section>
+        <section id="visualization">
+            <h2>Visualisasi</h2>
+            <canvas id="shieldCanvas" width="800" height="200"></canvas>
+        </section>
+    </main>
+    <footer>
+        <button id="back-to-selection">Kembali ke Hero Selection</button>
+    </footer>
+    <script src="hendra.js"></script>
+</body>
+</html>

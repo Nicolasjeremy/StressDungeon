@@ -1,0 +1,39 @@
+:root {
+    --color-white: #ebebeb;
+    --color-black: #292929;
+    --color-red: #D16666;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    background-image: url("landingPage.svg"); /* Use the background image */
+    background-size: cover; /* Cover the entire header */
+    background-position: center; /* Center the image */
+    color: var(--color-white);
+    text-align: center;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.content{
+    background-color: rgba(53, 53, 53, 0.31);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 10px;
+    border-radius: 30px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+#loader {
+    text-align: center;
+    margin-top: 10px;
+    color: var(--color-white);
+    font-size: large;
+}
