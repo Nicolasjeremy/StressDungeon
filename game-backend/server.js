@@ -1,8 +1,13 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const fs = require("fs");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+dotenv.config();
 
+
+
+// Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -10,41 +15,41 @@ const PORT = process.env.PORT || 5000;
 app.use(bodyParser.json());
 app.use(cors());
 
-// Path to the JSON file
-const DATA_FILE = "./data.json";
+// MongoDB connection
+const MONGO_URI =process.env.URI;
+mongoose
+  .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("Error connecting to MongoDB:", err));
 
-// Helper function to read JSON file
-function readDataFile() {
-  if (!fs.existsSync(DATA_FILE)) {
-    fs.writeFileSync(DATA_FILE, "{}"); // Create the file if it doesn't exist
-  }
-  const data = fs.readFileSync(DATA_FILE);
-  return JSON.parse(data);
-}
+// Define User schema
+const userSchema = new mongoose.Schema({
+  userId: { type: String, required: true, unique: true },
+  coins: { type: Number, default: 0 },
+  level: { type: Number, default: 1 },
+});
 
-// Helper function to write JSON file
-function writeDataFile(data) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
-}
+// Create User model
+const User = mongoose.model("User", userSchema);
 
 // Routes
 
 // Root route to check backend status
 app.get("/", (req, res) => {
-  res.send("Game Backend is Running!");
+  res.send("Game Backend is Running with MongoDB!");
 });
 
 // Get user data by userId
-app.get("/user/:userId", (req, res) => {
+app.get("/user/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
-    const data = readDataFile();
+    const user = await User.findOne({ userId });
 
-    if (!data[userId]) {
+    if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.json(data[userId]);
+    res.json(user);
   } catch (error) {
     console.error("Error fetching user data:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -52,20 +57,18 @@ app.get("/user/:userId", (req, res) => {
 });
 
 // Add or update user data
-app.post("/user/:userId", (req, res) => {
+app.post("/user/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
     const { coins, level } = req.body;
-    const data = readDataFile();
 
-    // Update or create user data
-    data[userId] = {
-      coins: coins ?? data[userId]?.coins ?? 0, // Use coins from request or fallback
-      level: level ?? data[userId]?.level ?? 1, // Use level from request or fallback
-    };
+    const user = await User.findOneAndUpdate(
+      { userId },
+      { $set: { coins, level } },
+      { new: true, upsert: true } // Create the document if it doesn't exist
+    );
 
-    writeDataFile(data);
-    res.json({ message: "User data updated successfully", data: data[userId] });
+    res.json({ message: "User data updated successfully", user });
   } catch (error) {
     console.error("Error saving user data:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -73,17 +76,15 @@ app.post("/user/:userId", (req, res) => {
 });
 
 // Delete a user by userId
-app.delete("/user/:userId", (req, res) => {
+app.delete("/user/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
-    const data = readDataFile();
 
-    if (!data[userId]) {
+    const user = await User.findOneAndDelete({ userId });
+    if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    delete data[userId];
-    writeDataFile(data);
     res.json({ message: "User deleted successfully" });
   } catch (error) {
     console.error("Error deleting user data:", error);

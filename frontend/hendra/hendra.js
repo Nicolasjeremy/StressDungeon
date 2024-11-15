@@ -54,7 +54,6 @@ function simulateMotion(acceleration) {
         position += velocity * timeStep; // Update position
 
         if (position > canvas.width) {
-            alert("Simulasi selesai! Perisai mencapai ujung arena.");
             return;
         }
 

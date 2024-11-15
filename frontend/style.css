@@ -37,3 +37,19 @@ body {
     color: var(--color-white);
     font-size: large;
 }
+
+@media (max-width: 576px) {
+    .content {
+        padding: 10px;
+        border-radius: 20px; /* Reduce border radius */
+        font-size: 12px;
+    }
+
+    #loader {
+        font-size: small;
+    }
+
+    .header {
+        padding: 15px;
+    }
+}

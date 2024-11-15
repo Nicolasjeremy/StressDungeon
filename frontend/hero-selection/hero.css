@@ -4,13 +4,13 @@ body {
     padding: 0;
     box-sizing: border-box;
     font-family: Arial, sans-serif;
-    height: 100vh;
+    height: fit-content;
+    min-height: 100vh;
     background-image: url("heroselectBackground.svg");
     background-size: cover;
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* Prevent the background image from repeating */
 }
-
 
 header {
     background-color: transparent;
@@ -44,7 +44,6 @@ header {
     cursor: pointer; /* Pointer cursor for buttons */
     transition: transform 0.3s ease, opacity 0.3s ease;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.701);
-    
 }
 
 .hero-card img {
@@ -57,4 +56,54 @@ header {
 .hero-card:hover {
     transform: scale(1.05); /* Slightly enlarge the card on hover */
     z-index: 1;
+}
+
+/* Responsive Design */
+
+/* For tablets and medium screens (max-width: 768px) */
+@media (max-width: 768px) {
+    #hero-content {
+        gap: 15px; /* Reduce gap for smaller screens */
+        padding: 15px;
+    }
+
+    .hero-card {
+        flex: 1 1 calc(50% - 30px); /* Two cards per row */
+        max-width: 45%; /* Scale card size */
+    }
+
+    .hero-card img {
+        max-width: 50%; /* Reduce image size */
+        height: auto;
+    }
+
+    header {
+        font-size: medium; /* Adjust header font size */
+        padding: 15px;
+    }
+}
+
+/* For mobile phones and small screens (max-width: 576px) */
+@media (max-width: 576px) {
+    #hero-content {
+        flex-direction: column; /* Stack cards vertically */
+        gap: 10px; /* Reduce gap between cards */
+        padding: 10px;
+    }
+
+    .hero-card {
+        flex: 1 1 100%; /* Each card takes full width */
+        max-width: 100%; /* Remove max-width for full-width display */
+        padding: 15px; /* Adjust padding for smaller screens */
+    }
+
+    .hero-card img {
+        max-width: 30%; /* Further reduce image size */
+        height: auto;
+    }
+
+    header {
+        font-size: small; /* Further reduce header font size */
+        padding: 10px;
+    }
 }

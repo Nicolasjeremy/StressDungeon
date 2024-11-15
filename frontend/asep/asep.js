@@ -64,10 +64,7 @@ document.getElementById("simulate").addEventListener("click", () => {
 
     // Check if the target distance is achieved
     if (Math.abs(maxDistance - targetDistance) <= 5) { // Allow a small margin of error
-        alert(`🎉 Target achieved! You earned 10 coins!`);
         addCoins(10);
-    } else {
-        alert(`❌ Target missed! Try again.`);
     }
 
     // Update coin display
