@@ -77,5 +77,5 @@ function simulateHeatDiffusion() {
 
 // Back to hero selection
 document.getElementById("back-to-selection").addEventListener("click", () => {
-    window.location.href = "StressDungeon/frontend/hero-selection/hero.html"; // Replace with your hero selection page
+    window.location.href = "/StressDungeon/frontend/hero-selection/hero.html"; // Replace with your hero selection page
 });

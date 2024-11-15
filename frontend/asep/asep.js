@@ -78,7 +78,7 @@ document.getElementById("simulate").addEventListener("click", () => {
 });
 
 document.getElementById("back-to-selection").addEventListener("click", () => {
-    window.location.href = "StressDungeon/frontend/hero-selection/hero.html"; // Update to your hero selection HTML path
+    window.location.href = "/StressDungeon/frontend/hero-selection/hero.html"; // Update to your hero selection HTML path
 });
 
 // Draw trajectory on canvas
