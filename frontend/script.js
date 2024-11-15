@@ -25,7 +25,6 @@ auth.onAuthStateChanged(async (user) => {
   const loader = document.getElementById("loader");
 
   if (user) {
-    console.log("User ID (UID):", user.uid);
     console.log("User is signed in:", user);
 
     // Fetch user progress from backend

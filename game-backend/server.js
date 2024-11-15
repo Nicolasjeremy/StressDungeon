@@ -7,13 +7,12 @@ dotenv.config();
 
 // Initialize Express app
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
 
 // Middleware
 app.use(bodyParser.json());
-app.use(cors({
-  origin: 'https://nicolasjeremy.github.io/StressDungeon/' // Replace with your frontend domain
-}));
+app.use(cors());
+
 // MongoDB connection
 const MONGO_URI = process.env.URI;
 mongoose
