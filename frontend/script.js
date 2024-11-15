@@ -21,6 +21,51 @@ const BACKEND_URL = "https://stressdungeon.onrender.com";
 // Global coin management
 let userCoins = 0;
 
+auth.onAuthStateChanged(async (user) => {
+  const firebaseUiContainer = document.getElementById("firebaseui-auth-container");
+  const loader = document.getElementById("loader");
+
+  if (user) {
+    console.log("User is signed in:", user);
+
+    // Fetch user progress from backend
+    const progress = await fetchUserProgress(user.uid);
+    userCoins = progress.coins; // Sync coins with backend
+    updateCoinDisplay();
+
+    // Hide the Firebase UI container and show welcome message
+    if (firebaseUiContainer) firebaseUiContainer.style.display = "none";
+    showWelcomeMessage(user);
+  } else {
+    console.log("No user is signed in.");
+
+    // Show Firebase UI container and update loader message
+    if (firebaseUiContainer) firebaseUiContainer.style.display = "block";
+    if (loader) loader.innerText = "Please sign in to continue.";
+
+    // Initialize Firebase UI
+    const ui = new firebaseui.auth.AuthUI(auth);
+
+    // FirebaseUI configuration
+    const uiConfig = {
+      signInOptions: [
+        firebase.auth.EmailAuthProvider.PROVIDER_ID,
+        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+      ],
+      signInFlow: "popup",
+      callbacks: {
+        signInSuccessWithAuthResult: () => {
+          // Automatically handle the redirect to the dashboard
+          return false; // Prevent automatic redirection
+        },
+      },
+    };
+
+    // Start Firebase UI
+    ui.start("#firebaseui-auth-container", uiConfig);
+  }
+});
+
 // Fetch user progress from backend
 async function fetchUserProgress(userId) {
   try {
@@ -88,21 +133,5 @@ function showWelcomeMessage(user) {
   });
 }
 
-// Monitor authentication state
-auth.onAuthStateChanged(async (user) => {
-  if (user) {
-    console.log("User is signed in:", user);
 
-    // Fetch user progress from backend
-    const progress = await fetchUserProgress(user.uid);
-    userCoins = progress.coins; // Sync coins with backend
-    updateCoinDisplay();
 
-    // Show welcome message
-    showWelcomeMessage(user);
-  } else {
-    console.log("No user is signed in.");
-    document.getElementById("firebaseui-auth-container").style.display = "block";
-    document.getElementById("loader").innerText = "Loading...";
-  }
-});
