@@ -13,7 +13,6 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-const backendUrl = "https://stressdungeon.onrender.com";
 
 // Backend API URL
 const BACKEND_URL = "https://stressdungeon.onrender.com";
