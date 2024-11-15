@@ -47,7 +47,7 @@ function showWelcomeMessage(user) {
 
   // Add click event to the "Continue" button
   document.getElementById("continue-button").addEventListener("click", () => {
-    window.location.href = "/dashboard.html"; // Redirect to the dashboard page
+    window.location.href = "/frontend/dashboard/dashboard.html"; // Redirect to the dashboard page
   });
 }
 
@@ -86,7 +86,7 @@ document.getElementById("logout")?.addEventListener("click", () => {
 // Function to save user data to the backend
 async function saveUserToBackend(user) {
   try {
-    const response = await fetch(`https://your-backend.onrender.com/user/${user.uid}`, {
+    const response = await fetch(`https://stressdungeon.onrender.com/${user.uid}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -108,7 +108,7 @@ async function saveUserToBackend(user) {
 // Function to fetch user progress from the backend
 async function fetchUserProgress(userId) {
   try {
-    const response = await fetch(`https://your-backend.onrender.com/user/${userId}`);
+    const response = await fetch(`https://stressdungeon.onrender.com/${userId}`);
     if (!response.ok) {
       throw new Error("Failed to fetch user progress");
     }
