@@ -25,7 +25,7 @@ ui.start("#firebaseui-auth-container", {
     firebase.auth.GoogleAuthProvider.PROVIDER_ID,
   ],
   signInFlow: "popup", // Use popup for sign-in
-  signInSuccessUrl: "StressDungeon//frontend/dashboard/dashboard.html", // Redirect after sign-in
+  signInSuccessUrl: "/StressDungeon//frontend/dashboard/dashboard.html", // Redirect after sign-in
   callbacks: {
     uiShown: () => {
       document.getElementById("loader").style.display = "none";
