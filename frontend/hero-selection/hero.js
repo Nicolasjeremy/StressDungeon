@@ -8,13 +8,13 @@ heroCards.forEach((card) => {
 
         // Check which hero was selected and redirect
         if (hero === "Hero 1") {
-            window.location.href = "StressDungeon//asep/asep.html"; // Redirect to Asep's page
+            window.location.href = "StressDungeon/frontend/asep/asep.html"; // Redirect to Asep's page
         } else if (hero === "Hero 2") {
-            window.location.href = "StressDungeon//dadang/dadang.html"; // Redirect to Dadang's page
+            window.location.href = "StressDungeon/frontend/dadang/dadang.html"; // Redirect to Dadang's page
         } else if (hero === "Hero 3") {
-            window.location.href = "StressDungeon//hendra/hendra.html"; // Redirect to Hendra's page
+            window.location.href = "StressDungeon/frontend/hendra/hendra.html"; // Redirect to Hendra's page
         } else if (hero === "Hero 4") {
-            window.location.href = "StressDungeon//siti/siti.html"; // Redirect to Siti's page
+            window.location.href = "StressDungeon/frontend/siti/siti.html"; // Redirect to Siti's page
         } else {
             alert("Hero page not available yet!"); // Default fallback
         }

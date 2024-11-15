@@ -86,7 +86,7 @@ function visualizeCollision(mass1, velocity1, mass2, velocity2, collisionType) {
 }
 
 document.getElementById("back-to-selection").addEventListener("click", () => {
-    window.location.href = "StressDungeon//hero-selection/hero.html"; // Ganti dengan path file HTML pemilihan hero
+    window.location.href = "StressDungeon/frontend/hero-selection/hero.html"; // Ganti dengan path file HTML pemilihan hero
 });
 
 // Simulate collision
