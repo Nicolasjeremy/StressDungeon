@@ -47,7 +47,7 @@ function showWelcomeMessage(user) {
 
   // Add click event to the "Continue" button
   document.getElementById("continue-button").addEventListener("click", () => {
-    window.location.href = "/frontend/dashboard/dashboard.html"; // Redirect to the dashboard page
+    window.location.href = "/StressDungeon//frontend/dashboard/dashboard.html"; // Redirect to the dashboard page
   });
 }
 
