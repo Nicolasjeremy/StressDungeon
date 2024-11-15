@@ -84,7 +84,7 @@ function showWelcomeMessage(user) {
   `;
 
   document.getElementById("continue-button").addEventListener("click", () => {
-    window.location.href = "/StressDungeon/frontend/hero-selection/hero.html";
+    window.location.href = "/StressDungeon/frontend/dashboard/dashboard.html";
   });
 }
 
