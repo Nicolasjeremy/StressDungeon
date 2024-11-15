@@ -10,81 +10,44 @@ const firebaseConfig = {
   measurementId: "G-WS87T99HRK",
 };
 
-// Initialize Firebase
+
+// Initialize Firebase using the compat layer
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-const backendUrl = "https://stressdungeon.onrender.com";
 
-// Backend API URL
-const BACKEND_URL = "https://stressdungeon.onrender.com";
+// Initialize FirebaseUI
+const ui = new firebaseui.auth.AuthUI(auth);
 
-// Global coin management
-let userCoins = 0;
+// FirebaseUI configuration
+ui.start("#firebaseui-auth-container", {
+  signInOptions: [
+    firebase.auth.EmailAuthProvider.PROVIDER_ID,
+    firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+  ],
+  signInFlow: "popup", // Use popup for sign-in
+  signInSuccessUrl: "/StressDungeon/frontend/dashboard/dashboard.html", // Redirect after sign-in
+  callbacks: {
+    uiShown: () => {
+      document.getElementById("loader").style.display = "none";
+    },
+  },
+});
 
-// Fetch user progress from backend
-async function fetchUserProgress(userId) {
-  try {
-    const response = await fetch(`${BACKEND_URL}/user/${userId}`);
-    if (!response.ok) throw new Error("Failed to fetch user progress");
-
-    const data = await response.json();
-    console.log("User progress fetched:", data);
-    return data;
-  } catch (error) {
-    console.error("Error fetching user progress:", error);
-    return { coins: 0, level: 1 }; // Default data on error
-  }
-}
-
-// Save user data to backend
-async function saveUserToBackend(userId, coins, level) {
-  try {
-    const response = await fetch(`${BACKEND_URL}/user/${userId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ coins, level }),
-    });
-    if (!response.ok) throw new Error("Failed to save user progress");
-
-    console.log("User data saved successfully");
-  } catch (error) {
-    console.error("Error saving user data to backend:", error);
-  }
-}
-
-// Get coins from memory
-function getCoins() {
-  return userCoins;
-}
-
-// Add coins and save to backend
-async function addCoins(amount) {
-  userCoins += amount;
-  const user = firebase.auth().currentUser;
-  if (user) {
-    await saveUserToBackend(user.uid, userCoins, 1);
-  }
-  updateCoinDisplay();
-}
-
-// Update coin display
-function updateCoinDisplay() {
-  const coinDisplay = document.getElementById("coin-display");
-  if (coinDisplay) {
-    coinDisplay.textContent = `Coins: ${getCoins()}`;
-  }
-}
-
-// Show welcome message
+// Function to show the welcome message and continue button
 function showWelcomeMessage(user) {
+  const container = document.getElementById("firebaseui-auth-container");
+  container.style.display = "none";
+
   const loader = document.getElementById("loader");
+  loader.style.display = "block";
   loader.innerHTML = `
     <h2>Hello, ${user.displayName || user.email}!</h2>
     <button id="continue-button" class="continue-button">Continue</button>
   `;
 
+  // Add click event to the "Continue" button
   document.getElementById("continue-button").addEventListener("click", () => {
-    window.location.href = "/StressDungeon/frontend/dashboard/dashboard.html";
+    window.location.href = "/StressDungeon/frontend/dashboard/dashboard.html"; // Redirect to the dashboard page
   });
 }
 
@@ -93,12 +56,13 @@ auth.onAuthStateChanged(async (user) => {
   if (user) {
     console.log("User is signed in:", user);
 
-    // Fetch user progress from backend
-    const progress = await fetchUserProgress(user.uid);
-    userCoins = progress.coins; // Sync coins with backend
-    updateCoinDisplay();
+    // Save user data to the backend
+    await saveUserToBackend(user);
 
-    // Show welcome message
+    // Fetch and display user progress
+    await fetchUserProgress(user.uid);
+
+    // Show welcome message and continue button
     showWelcomeMessage(user);
   } else {
     console.log("No user is signed in.");
@@ -106,3 +70,54 @@ auth.onAuthStateChanged(async (user) => {
     document.getElementById("loader").innerText = "Loading...";
   }
 });
+
+// Logout button functionality
+document.getElementById("logout")?.addEventListener("click", () => {
+  auth.signOut()
+    .then(() => {
+      console.log("User signed out.");
+      window.location.href = "/"; // Redirect back to the home/login page
+    })
+    .catch((error) => {
+      console.error("Error signing out:", error);
+    });
+});
+
+// Function to save user data to the backend
+async function saveUserToBackend(user) {
+  try {
+    const response = await fetch(`https://stressdungeon.onrender.com/${user.uid}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        coins: 0, // Default coins for a new user
+        level: 1, // Default level for a new user
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to save user to backend");
+    }
+
+    console.log("User data saved to backend successfully");
+  } catch (error) {
+    console.error("Error saving user to backend:", error);
+  }
+}
+
+// Function to fetch user progress from the backend
+async function fetchUserProgress(userId) {
+  try {
+    const response = await fetch(`https://stressdungeon.onrender.com/${userId}`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch user progress");
+    }
+
+    const data = await response.json();
+    console.log("User progress fetched:", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching user progress:", error);
+    return null;
+  }
+}
