@@ -1,16 +1,63 @@
-// Coin management (shared globally)
+// Backend API URL
+const BACKEND_URL = "https://stressdungeon.onrender.com";
+
+// Global coin management
+let userCoins = 0;
+
+// Fetch user progress from backend
+async function fetchUserProgress(userId) {
+    try {
+        const response = await fetch(`${BACKEND_URL}/user/${userId}`);
+        if (!response.ok) throw new Error("Failed to fetch user progress");
+
+        const data = await response.json();
+        console.log("User progress fetched:", data);
+        return data;
+    } catch (error) {
+        console.error("Error fetching user progress:", error);
+        return { coins: 0, level: 1 }; // Default data on error
+    }
+}
+
+// Save user data to backend
+async function saveUserToBackend(userId, coins, level) {
+    try {
+        const response = await fetch(`${BACKEND_URL}/user/${userId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ coins, level }),
+        });
+        if (!response.ok) throw new Error("Failed to save user progress");
+
+        console.log("User data saved successfully");
+    } catch (error) {
+        console.error("Error saving user data to backend:", error);
+    }
+}
+
+// Get coins from memory
 function getCoins() {
-    return parseInt(localStorage.getItem("coins")) || 0;
+    return userCoins;
 }
 
-function addCoins(amount) {
-    const currentCoins = getCoins();
-    localStorage.setItem("coins", currentCoins + amount);
+// Add coins and save to backend
+async function addCoins(amount) {
+    userCoins += amount;
+    const user = firebase.auth().currentUser;
+    if (user) {
+        await saveUserToBackend(user.uid, userCoins, 1);
+    }
+    updateCoinDisplay();
 }
 
+// Update coin display
 function updateCoinDisplay() {
-    document.getElementById("coin-display").textContent = `Coins: ${getCoins()}`;
+    const coinDisplay = document.getElementById("coin-display");
+    if (coinDisplay) {
+        coinDisplay.textContent = `Coins: ${getCoins()}`;
+    }
 }
+
 // Visualize collision
 function visualizeCollision(mass1, velocity1, mass2, velocity2, collisionType) {
     const canvas = document.getElementById("collisionCanvas");
@@ -85,12 +132,8 @@ function visualizeCollision(mass1, velocity1, mass2, velocity2, collisionType) {
     animate();
 }
 
-document.getElementById("back-to-selection").addEventListener("click", () => {
-    window.location.href = "/StressDungeon/frontend/hero-selection/hero.html"; // Ganti dengan path file HTML pemilihan hero
-});
-
 // Simulate collision
-document.getElementById("simulate").addEventListener("click", () => {
+document.getElementById("simulate").addEventListener("click", async () => {
     const mass1 = parseFloat(document.getElementById("mass1").value);
     const velocity1 = parseFloat(document.getElementById("velocity1").value);
     const mass2 = parseFloat(document.getElementById("mass2").value);
@@ -126,10 +169,15 @@ document.getElementById("simulate").addEventListener("click", () => {
 
     // Reward coins if momentum conservation holds
     if (Math.abs(momentumBefore - momentumAfter) < 0.1) {
-        addCoins(5);
-        updateCoinDisplay();
-    } else {}
+        alert("Momentum conserved! 5 coins added!");
+        await addCoins(5);
+    }
 
     // Visualize collision
     visualizeCollision(mass1, velocity1, mass2, velocity2, collisionType);
+});
+
+// Back to hero selection
+document.getElementById("back-to-selection").addEventListener("click", () => {
+    window.location.href = "/StressDungeon/frontend/hero-selection/hero.html";
 });

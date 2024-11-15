@@ -1,13 +1,80 @@
+// Backend API URL
+const BACKEND_URL = "https://stressdungeon.onrender.com";
+
 // Global coin management
+let userCoins = 0;
+
+// Fetch user progress from backend
+async function fetchUserProgress(userId) {
+    try {
+        const response = await fetch(`${BACKEND_URL}/user/${userId}`);
+        if (!response.ok) throw new Error("Failed to fetch user progress");
+
+        const data = await response.json();
+        console.log("User progress fetched:", data);
+        return data;
+    } catch (error) {
+        console.error("Error fetching user progress:", error);
+        return { coins: 0, level: 1 }; // Default data on error
+    }
+}
+
+// Save user data to backend
+async function saveUserToBackend(userId, coins, level) {
+    try {
+        const response = await fetch(`${BACKEND_URL}/user/${userId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ coins, level }),
+        });
+        if (!response.ok) throw new Error("Failed to save user progress");
+
+        console.log("User data saved successfully");
+    } catch (error) {
+        console.error("Error saving user data to backend:", error);
+    }
+}
+
+// Initialize game
+document.addEventListener("DOMContentLoaded", async () => {
+    const user = firebase.auth().currentUser;
+
+    if (user) {
+        // Fetch user progress
+        const progress = await fetchUserProgress(user.uid);
+        userCoins = progress.coins; // Sync coins with backend
+        updateCoinDisplay();
+
+        // Generate and display random target distance
+        const targetDistance = generateRandomTarget(20, 100);
+        const targetDistanceDisplay = document.getElementById("target-distance-display");
+        if (targetDistanceDisplay) {
+            targetDistanceDisplay.textContent = targetDistance;
+        }
+
+        const simulateButton = document.getElementById("simulate");
+        if (simulateButton) {
+            simulateButton.dataset.targetDistance = targetDistance; // Store target in button dataset
+        }
+    }
+});
+
+// Add coins and save to backend
+async function addCoins(amount) {
+    userCoins += amount;
+    const user = firebase.auth().currentUser;
+    if (user) {
+        await saveUserToBackend(user.uid, userCoins, 1); // Save to backend
+    }
+    updateCoinDisplay();
+}
+
+// Get current coins
 function getCoins() {
-    return parseInt(localStorage.getItem("coins")) || 0;
+    return userCoins;
 }
 
-function addCoins(amount) {
-    const currentCoins = getCoins();
-    localStorage.setItem("coins", currentCoins + amount);
-}
-
+// Update coin display
 function updateCoinDisplay() {
     const coinDisplay = document.getElementById("coin-display");
     if (coinDisplay) {
@@ -20,23 +87,7 @@ function generateRandomTarget(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Initialize game
-document.addEventListener("DOMContentLoaded", () => {
-    updateCoinDisplay();
-
-    // Generate and display random target distance
-    const targetDistance = generateRandomTarget(20, 100); // Example range: 20 to 100 meters
-    const targetDistanceDisplay = document.getElementById("target-distance-display");
-    if (targetDistanceDisplay) {
-        targetDistanceDisplay.textContent = targetDistance;
-    }
-
-    const simulateButton = document.getElementById("simulate");
-    if (simulateButton) {
-        simulateButton.dataset.targetDistance = targetDistance; // Store target in button dataset
-    }
-});
-
+// Event listener for simulation button
 document.getElementById("simulate").addEventListener("click", () => {
     const velocity = parseFloat(document.getElementById("velocity").value);
     const angle = parseFloat(document.getElementById("angle").value);
@@ -64,6 +115,7 @@ document.getElementById("simulate").addEventListener("click", () => {
 
     // Check if the target distance is achieved
     if (Math.abs(maxDistance - targetDistance) <= 5) { // Allow a small margin of error
+        alert("Target hit! 10 coins added!");
         addCoins(10);
     }
 
@@ -74,8 +126,9 @@ document.getElementById("simulate").addEventListener("click", () => {
     drawTrajectory(velocity, angleRadians, gravity, totalTime, maxDistance);
 });
 
+// Back to hero selection
 document.getElementById("back-to-selection").addEventListener("click", () => {
-    window.location.href = "/StressDungeon/frontend/hero-selection/hero.html"; // Update to your hero selection HTML path
+    window.location.href = "/StressDungeon/frontend/hero-selection/hero.html"; // Update path
 });
 
 // Draw trajectory on canvas
