@@ -1,19 +1,56 @@
-// Global coin management
-function getCoins() {
-    return parseInt(localStorage.getItem("coins")) || 0;
-}
+const BASE_URL = "https://stressdungeon.onrender.com"; // Replace with your actual backend URL
 
-function addCoins(amount) {
-    const currentCoins = getCoins();
-    localStorage.setItem("coins", currentCoins + amount);
-}
-
-function updateCoinDisplay() {
-    const coinDisplay = document.getElementById("coin-display");
-    if (coinDisplay) {
-        coinDisplay.textContent = `Coins: ${getCoins()}`;
+// Get user data (coins, etc.) from the backend
+async function getUserData(userId) {
+    try {
+        const response = await fetch(`${BASE_URL}/user/${userId}`);
+        if (!response.ok) {
+            throw new Error("Failed to fetch user data");
+        }
+        return await response.json(); // Returns the user object from MongoDB
+    } catch (error) {
+        console.error("Error getting user data:", error);
+        return { coins: 0 }; // Fallback to default if there's an error
     }
 }
+
+// Update user data (coins, etc.) in the backend
+async function updateUserData(userId, coins, level) {
+    try {
+        const response = await fetch(`${BASE_URL}/user/${userId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ coins, level }),
+        });
+        if (!response.ok) {
+            throw new Error("Failed to update user data");
+        }
+        console.log("User data updated successfully");
+    } catch (error) {
+        console.error("Error updating user data:", error);
+    }
+}
+
+async function getCoins(userId) {
+    const userData = await getUserData(userId);
+    return userData.coins || 0; // Return coins or 0 if not found
+}
+
+async function addCoins(userId, amount) {
+    const currentCoins = await getCoins(userId);
+    const newCoins = currentCoins + amount;
+    await updateUserData(userId, newCoins, 1); // Update coins in backend; level hardcoded for now
+    return newCoins;
+}
+
+
+function updateCoinDisplay(coins) {
+    const coinDisplay = document.getElementById("coin-display");
+    if (coinDisplay) {
+        coinDisplay.textContent = `Coins: ${coins}`;
+    }
+}
+
 
 // Generate random target distance
 function generateRandomTarget(min, max) {
@@ -21,8 +58,10 @@ function generateRandomTarget(min, max) {
 }
 
 // Initialize game
-document.addEventListener("DOMContentLoaded", () => {
-    updateCoinDisplay();
+document.addEventListener("DOMContentLoaded", async () => {
+    const userId = "exampleUserId"; // Replace with the logged-in user's ID from Firebase Auth
+    const coins = await getCoins(userId); // Fetch coins from MongoDB
+    updateCoinDisplay(coins); // Update display
 
     // Generate and display random target distance
     const targetDistance = generateRandomTarget(20, 100); // Example range: 20 to 100 meters
@@ -34,10 +73,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const simulateButton = document.getElementById("simulate");
     if (simulateButton) {
         simulateButton.dataset.targetDistance = targetDistance; // Store target in button dataset
+        simulateButton.dataset.userId = userId; // Store userId for use in the simulation
     }
 });
 
-document.getElementById("simulate").addEventListener("click", () => {
+
+document.getElementById("simulate").addEventListener("click", async () => {
     const velocity = parseFloat(document.getElementById("velocity").value);
     const angle = parseFloat(document.getElementById("angle").value);
     const gravity = parseFloat(document.getElementById("gravity").value);
@@ -48,6 +89,7 @@ document.getElementById("simulate").addEventListener("click", () => {
     }
 
     const targetDistance = parseFloat(document.getElementById("simulate").dataset.targetDistance);
+    const userId = document.getElementById("simulate").dataset.userId;
 
     // Convert angle to radians
     const angleRadians = (angle * Math.PI) / 180;
@@ -64,15 +106,14 @@ document.getElementById("simulate").addEventListener("click", () => {
 
     // Check if the target distance is achieved
     if (Math.abs(maxDistance - targetDistance) <= 5) { // Allow a small margin of error
-        addCoins(10);
+        const updatedCoins = await addCoins(userId, 10); // Update coins in MongoDB
+        updateCoinDisplay(updatedCoins); // Update display with new coin total
     }
-
-    // Update coin display
-    updateCoinDisplay();
 
     // Draw trajectory on canvas
     drawTrajectory(velocity, angleRadians, gravity, totalTime, maxDistance);
 });
+
 
 document.getElementById("back-to-selection").addEventListener("click", () => {
     window.location.href = "/StressDungeon/frontend/hero-selection/hero.html"; // Update to your hero selection HTML path

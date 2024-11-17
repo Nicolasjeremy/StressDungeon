@@ -1,45 +1,76 @@
-// Coin management (shared globally)
-function getCoins() {
-    return parseInt(localStorage.getItem("coins")) || 0;
+const BASE_URL = "https://stressdungeon.onrender.com"; // Replace with your actual backend URL
+
+// Fetch user data (coins, etc.) from the backend
+async function getUserData(userId) {
+    try {
+        const response = await fetch(`${BASE_URL}/user/${userId}`);
+        if (!response.ok) {
+            throw new Error("Failed to fetch user data");
+        }
+        return await response.json(); // Returns the user object
+    } catch (error) {
+        console.error("Error fetching user data:", error);
+        return { coins: 0 }; // Default fallback
+    }
 }
 
-function addCoins(amount) {
-    const currentCoins = getCoins();
-    localStorage.setItem("coins", currentCoins + amount);
+// Update user data (coins, etc.) in the backend
+async function updateUserData(userId, coins) {
+    try {
+        const response = await fetch(`${BASE_URL}/user/${userId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ coins }),
+        });
+        if (!response.ok) {
+            throw new Error("Failed to update user data");
+        }
+        console.log("User data updated successfully");
+    } catch (error) {
+        console.error("Error updating user data:", error);
+    }
 }
 
-function updateCoinDisplay() {
-    document.getElementById("coin-display").textContent = `Coins: ${getCoins()}`;
+async function getCoins(userId) {
+    const userData = await getUserData(userId);
+    return userData.coins || 0; // Return coins or 0 if not found
 }
+
+async function addCoins(userId, amount) {
+    const currentCoins = await getCoins(userId);
+    const newCoins = currentCoins + amount;
+    await updateUserData(userId, newCoins); // Update coins in the backend
+    return newCoins;
+}
+
+
+function updateCoinDisplay(coins) {
+    document.getElementById("coin-display").textContent = `Coins: ${coins}`;
+}
+
 // Visualize collision
 function visualizeCollision(mass1, velocity1, mass2, velocity2, collisionType) {
     const canvas = document.getElementById("collisionCanvas");
     const ctx = canvas.getContext("2d");
 
-    // Canvas settings
     const width = canvas.width;
     const height = canvas.height;
     const objectRadius = 20;
 
-    // Positions
-    let position1 = objectRadius + 50; // Initial position of object 1
-    let position2 = width - objectRadius - 50; // Initial position of object 2
+    let position1 = objectRadius + 50; 
+    let position2 = width - objectRadius - 50; 
 
-    // Clear canvas
     ctx.clearRect(0, 0, width, height);
 
-    // Draw initial positions
     function drawObjects() {
         ctx.clearRect(0, 0, width, height);
 
-        // Object 1
         ctx.beginPath();
         ctx.arc(position1, height / 2, objectRadius, 0, Math.PI * 2);
         ctx.fillStyle = "blue";
         ctx.fill();
         ctx.closePath();
 
-        // Object 2
         ctx.beginPath();
         ctx.arc(position2, height / 2, objectRadius, 0, Math.PI * 2);
         ctx.fillStyle = "red";
@@ -47,7 +78,6 @@ function visualizeCollision(mass1, velocity1, mass2, velocity2, collisionType) {
         ctx.closePath();
     }
 
-    // Calculate velocities after collision
     let velocity1After, velocity2After;
     if (collisionType === "elastic") {
         velocity1After =
@@ -61,18 +91,15 @@ function visualizeCollision(mass1, velocity1, mass2, velocity2, collisionType) {
         velocity2After = finalVelocity;
     }
 
-    // Animate collision
     function animate() {
         position1 += velocity1;
         position2 += velocity2;
 
-        // Detect collision
         if (position2 - position1 <= objectRadius * 2) {
             velocity1 = velocity1After;
             velocity2 = velocity2After;
         }
 
-        // Stop animation if objects move out of bounds
         if (position1 > width || position2 < 0) {
             return;
         }
@@ -85,17 +112,19 @@ function visualizeCollision(mass1, velocity1, mass2, velocity2, collisionType) {
     animate();
 }
 
+
 document.getElementById("back-to-selection").addEventListener("click", () => {
     window.location.href = "/StressDungeon/frontend/hero-selection/hero.html"; // Ganti dengan path file HTML pemilihan hero
 });
 
-// Simulate collision
-document.getElementById("simulate").addEventListener("click", () => {
+document.getElementById("simulate").addEventListener("click", async () => {
     const mass1 = parseFloat(document.getElementById("mass1").value);
     const velocity1 = parseFloat(document.getElementById("velocity1").value);
     const mass2 = parseFloat(document.getElementById("mass2").value);
     const velocity2 = parseFloat(document.getElementById("velocity2").value);
     const collisionType = document.getElementById("collision-type").value;
+
+    const userId = "exampleUserId"; // Replace with the logged-in user's ID from Firebase Auth
 
     // Calculate momentum and energy
     const momentumBefore = mass1 * velocity1 + mass2 * velocity2;
@@ -126,10 +155,17 @@ document.getElementById("simulate").addEventListener("click", () => {
 
     // Reward coins if momentum conservation holds
     if (Math.abs(momentumBefore - momentumAfter) < 0.1) {
-        addCoins(5);
-        updateCoinDisplay();
-    } else {}
+        const updatedCoins = await addCoins(userId, 5); // Add coins via MongoDB
+        updateCoinDisplay(updatedCoins); // Update display with new coin total
+    }
 
     // Visualize collision
     visualizeCollision(mass1, velocity1, mass2, velocity2, collisionType);
+});
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const userId = "exampleUserId"; // Replace with the logged-in user's ID from Firebase Auth
+    const coins = await getCoins(userId); // Fetch coins from MongoDB
+    updateCoinDisplay(coins); // Update display
 });
