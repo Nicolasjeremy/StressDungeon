@@ -1,5 +1,5 @@
 const BASE_URL = "https://stressdungeon.onrender.com"; // Replace with your actual backend URL
-
+const userID = localStorage.getItem("userID");
 // Get user data (coins, etc.) from the backend
 async function getUserData(userId) {
     try {
@@ -59,7 +59,7 @@ function generateRandomTarget(min, max) {
 
 // Initialize game
 document.addEventListener("DOMContentLoaded", async () => {
-    const userId = "exampleUserId"; // Replace with the logged-in user's ID from Firebase Auth
+    const userId = localStorage.getItem("userID");
     const coins = await getCoins(userId); // Fetch coins from MongoDB
     updateCoinDisplay(coins); // Update display
 

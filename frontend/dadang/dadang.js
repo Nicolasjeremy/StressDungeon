@@ -1,5 +1,5 @@
 const BASE_URL = "https://stressdungeon.onrender.com"; // Replace with your actual backend URL
-
+const userID = localStorage.getItem("userID");
 // Fetch user data (coins, etc.) from the backend
 async function getUserData(userId) {
     try {
@@ -124,7 +124,7 @@ document.getElementById("simulate").addEventListener("click", async () => {
     const velocity2 = parseFloat(document.getElementById("velocity2").value);
     const collisionType = document.getElementById("collision-type").value;
 
-    const userId = "exampleUserId"; // Replace with the logged-in user's ID from Firebase Auth
+    const userId = userID; // Replace with the logged-in user's ID from Firebase Auth
 
     // Calculate momentum and energy
     const momentumBefore = mass1 * velocity1 + mass2 * velocity2;
@@ -165,7 +165,7 @@ document.getElementById("simulate").addEventListener("click", async () => {
 
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const userId = "exampleUserId"; // Replace with the logged-in user's ID from Firebase Auth
+    const userId = userID; // Replace with the logged-in user's ID from Firebase Auth
     const coins = await getCoins(userId); // Fetch coins from MongoDB
     updateCoinDisplay(coins); // Update display
 });

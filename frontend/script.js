@@ -25,7 +25,7 @@ ui.start("#firebaseui-auth-container", {
     firebase.auth.GoogleAuthProvider.PROVIDER_ID,
   ],
   signInFlow: "popup", // Use popup for sign-in
-  signInSuccessUrl: "/StressDungeon/frontend/dashboard/dashboard.html", // Redirect after sign-in
+  signInSuccessUrl: "/StressDungeon/frontend/hero-selection/hero.html", // Redirect after sign-in
   callbacks: {
     uiShown: () => {
       document.getElementById("loader").style.display = "none";
@@ -55,17 +55,18 @@ function showWelcomeMessage(user) {
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     console.log("User is signed in:", user);
-
     // Save user data to the backend
     await saveUserToBackend(user);
 
     // Fetch and display user progress
     await fetchUserProgress(user.uid);
-
+    const userID = user.uid;
+    localStorage.setItem("userID", userID);
     // Show welcome message and continue button
     showWelcomeMessage(user);
   } else {
     console.log("No user is signed in.");
+    localStorage.removeItem("userID");
     document.getElementById("firebaseui-auth-container").style.display = "block";
     document.getElementById("loader").innerText = "Loading...";
   }
