@@ -87,7 +87,15 @@ document.getElementById("logout")?.addEventListener("click", () => {
 // Function to save user data to the backend
 async function saveUserToBackend(user) {
   try {
-    const response = await fetch(`https://stressdungeon.onrender.com/user/${user.uid}`, {
+    // Check if the user already exists
+    const response = await fetch(`https://stressdungeon.onrender.com/user/${user.uid}`);
+    if (response.ok) {
+      console.log("User already exists, no need to reset stats.");
+      return; // Exit early if the user exists
+    }
+
+    // If the user does not exist, create a new record with default stats
+    const createResponse = await fetch(`https://stressdungeon.onrender.com/user/${user.uid}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -96,15 +104,16 @@ async function saveUserToBackend(user) {
       }),
     });
 
-    if (!response.ok) {
+    if (!createResponse.ok) {
       throw new Error("Failed to save user to backend");
     }
 
-    console.log("User data saved to backend successfully");
+    console.log("New user created with default stats.");
   } catch (error) {
     console.error("Error saving user to backend:", error);
   }
 }
+
 
 // Function to fetch user progress from the backend
 async function fetchUserProgress(userId) {
