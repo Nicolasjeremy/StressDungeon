@@ -60,6 +60,7 @@ function generateRandomTarget(min, max) {
 // Initialize game
 document.addEventListener("DOMContentLoaded", async () => {
     const userId = localStorage.getItem("userID");
+    console.log("User ID:", userId);
     const coins = await getCoins(userId); // Fetch coins from MongoDB
     updateCoinDisplay(coins); // Update display
 
