@@ -87,7 +87,7 @@ document.getElementById("logout")?.addEventListener("click", () => {
 // Function to save user data to the backend
 async function saveUserToBackend(user) {
   try {
-    const response = await fetch(`https://stressdungeon.onrender.com/${user.uid}`, {
+    const response = await fetch(`https://stressdungeon.onrender.com/user/${user.uid}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -109,7 +109,7 @@ async function saveUserToBackend(user) {
 // Function to fetch user progress from the backend
 async function fetchUserProgress(userId) {
   try {
-    const response = await fetch(`https://stressdungeon.onrender.com/${userId}`);
+    const response = await fetch(`https://stressdungeon.onrender.com/user/${userId}`);
     if (!response.ok) {
       throw new Error("Failed to fetch user progress");
     }
