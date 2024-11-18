@@ -1,22 +1,19 @@
-// Get all hero cards
 const heroCards = document.querySelectorAll(".hero-card");
 
-// Add click event listener to each card
 heroCards.forEach((card) => {
     card.addEventListener("click", () => {
-        const hero = card.dataset.hero; // Get hero name from data attribute
+        const hero = card.dataset.hero;
 
-        // Check which hero was selected and redirect
         if (hero === "Hero 1") {
-            window.location.href = "/StressDungeon/frontend/asep/asep.html"; // Redirect to Asep's page
+            window.location.href = "/StressDungeon/frontend/asep/asep.html";
         } else if (hero === "Hero 2") {
-            window.location.href = "/StressDungeon/frontend/dadang/dadang.html"; // Redirect to Dadang's page
+            window.location.href = "/StressDungeon/frontend/dadang/dadang.html";
         } else if (hero === "Hero 3") {
-            window.location.href = "/StressDungeon/frontend/hendra/hendra.html"; // Redirect to Hendra's page
+            window.location.href = "/StressDungeon/frontend/hendra/hendra.html";
         } else if (hero === "Hero 4") {
-            window.location.href = "/StressDungeon/frontend/siti/siti.html"; // Redirect to Siti's page
+            window.location.href = "/StressDungeon/frontend/siti/siti.html";
         } else {
-            alert("Hero page not available yet!"); // Default fallback
+            alert("Hero page not available yet!");
         }
     });
 });

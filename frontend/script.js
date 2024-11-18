@@ -1,5 +1,4 @@
 
-// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyC1WNLBWHJP0mUq5NyJe8UBqcYY-vwiUxM",
   authDomain: "stressdungeon.firebaseapp.com",
@@ -11,21 +10,18 @@ const firebaseConfig = {
 };
 
 
-// Initialize Firebase using the compat layer
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
-// Initialize FirebaseUI
 const ui = new firebaseui.auth.AuthUI(auth);
 
-// FirebaseUI configuration
 ui.start("#firebaseui-auth-container", {
   signInOptions: [
     firebase.auth.EmailAuthProvider.PROVIDER_ID,
     firebase.auth.GoogleAuthProvider.PROVIDER_ID,
   ],
-  signInFlow: "popup", // Use popup for sign-in
-  signInSuccessUrl: "/StressDungeon/frontend/hero-selection/hero.html", // Redirect after sign-in
+  signInFlow: "popup",
+  signInSuccessUrl: "/StressDungeon/frontend/hero-selection/hero.html",
   callbacks: {
     uiShown: () => {
       document.getElementById("loader").style.display = "none";
@@ -33,7 +29,6 @@ ui.start("#firebaseui-auth-container", {
   },
 });
 
-// Function to show the welcome message and continue button
 function showWelcomeMessage(user) {
   const container = document.getElementById("firebaseui-auth-container");
   container.style.display = "none";
@@ -45,24 +40,19 @@ function showWelcomeMessage(user) {
     <button id="continue-button" class="continue-button">Continue</button>
   `;
 
-  // Add click event to the "Continue" button
   document.getElementById("continue-button").addEventListener("click", () => {
-    window.location.href = "/StressDungeon/frontend/dashboard/dashboard.html"; // Redirect to the dashboard page
+    window.location.href = "/StressDungeon/frontend/hero-selection/hero.html"; 
   });
 }
 
-// Monitor authentication state
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     console.log("User is signed in:", user);
-    // Save user data to the backend
     await saveUserToBackend(user);
 
-    // Fetch and display user progress
     await fetchUserProgress(user.uid);
     const userID = user.uid;
     localStorage.setItem("userID", userID);
-    // Show welcome message and continue button
     showWelcomeMessage(user);
   } else {
     console.log("No user is signed in.");
@@ -72,35 +62,31 @@ auth.onAuthStateChanged(async (user) => {
   }
 });
 
-// Logout button functionality
 document.getElementById("logout")?.addEventListener("click", () => {
   auth.signOut()
     .then(() => {
       console.log("User signed out.");
-      window.location.href = "/"; // Redirect back to the home/login page
+      window.location.href = "/";
     })
     .catch((error) => {
       console.error("Error signing out:", error);
     });
 });
 
-// Function to save user data to the backend
 async function saveUserToBackend(user) {
   try {
-    // Check if the user already exists
     const response = await fetch(`https://stressdungeon.onrender.com/user/${user.uid}`);
     if (response.ok) {
       console.log("User already exists, no need to reset stats.");
-      return; // Exit early if the user exists
+      return;
     }
 
-    // If the user does not exist, create a new record with default stats
     const createResponse = await fetch(`https://stressdungeon.onrender.com/user/${user.uid}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        coins: 0, // Default coins for a new user
-        level: 1, // Default level for a new user
+        coins: 0,
+        level: 1,
       }),
     });
 
@@ -113,9 +99,6 @@ async function saveUserToBackend(user) {
     console.error("Error saving user to backend:", error);
   }
 }
-
-
-// Function to fetch user progress from the backend
 async function fetchUserProgress(userId) {
   try {
     const response = await fetch(`https://stressdungeon.onrender.com/user/${userId}`);

@@ -65,7 +65,7 @@ app.post("/user/:userId", async (req, res) => {
     const user = await User.findOneAndUpdate(
       { userId },
       { $set: { coins, level } },
-      { new: true, upsert: true } // Create the document if it doesn't exist
+      { new: true, upsert: true }
     );
 
     res.json({ message: "User data updated successfully", user });

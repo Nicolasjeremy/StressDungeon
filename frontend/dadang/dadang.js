@@ -1,20 +1,18 @@
-const BASE_URL = "https://stressdungeon.onrender.com"; // Replace with your actual backend URL
+const BASE_URL = "https://stressdungeon.onrender.com";
 const userID = localStorage.getItem("userID");
-// Fetch user data (coins, etc.) from the backend
 async function getUserData(userId) {
     try {
         const response = await fetch(`${BASE_URL}/user/${userId}`);
         if (!response.ok) {
             throw new Error("Failed to fetch user data");
         }
-        return await response.json(); // Returns the user object
+        return await response.json();
     } catch (error) {
         console.error("Error fetching user data:", error);
-        return { coins: 0 }; // Default fallback
+        return { coins: 0 };
     }
 }
 
-// Update user data (coins, etc.) in the backend
 async function updateUserData(userId, coins) {
     try {
         const response = await fetch(`${BASE_URL}/user/${userId}`, {
@@ -33,13 +31,13 @@ async function updateUserData(userId, coins) {
 
 async function getCoins(userId) {
     const userData = await getUserData(userId);
-    return userData.coins || 0; // Return coins or 0 if not found
+    return userData.coins || 0;
 }
 
 async function addCoins(userId, amount) {
     const currentCoins = await getCoins(userId);
     const newCoins = currentCoins + amount;
-    await updateUserData(userId, newCoins); // Update coins in the backend
+    await updateUserData(userId, newCoins);
     return newCoins;
 }
 
@@ -48,7 +46,6 @@ function updateCoinDisplay(coins) {
     document.getElementById("coin-display").textContent = `Coins: ${coins}`;
 }
 
-// Visualize collision
 function visualizeCollision(mass1, velocity1, mass2, velocity2, collisionType) {
     const canvas = document.getElementById("collisionCanvas");
     const ctx = canvas.getContext("2d");
@@ -114,7 +111,7 @@ function visualizeCollision(mass1, velocity1, mass2, velocity2, collisionType) {
 
 
 document.getElementById("back-to-selection").addEventListener("click", () => {
-    window.location.href = "/StressDungeon/frontend/hero-selection/hero.html"; // Ganti dengan path file HTML pemilihan hero
+    window.location.href = "/StressDungeon/frontend/hero-selection/hero.html";
 });
 
 document.getElementById("simulate").addEventListener("click", async () => {
@@ -124,9 +121,8 @@ document.getElementById("simulate").addEventListener("click", async () => {
     const velocity2 = parseFloat(document.getElementById("velocity2").value);
     const collisionType = document.getElementById("collision-type").value;
 
-    const userId = userID; // Replace with the logged-in user's ID from Firebase Auth
+    const userId = userID;
 
-    // Calculate momentum and energy
     const momentumBefore = mass1 * velocity1 + mass2 * velocity2;
     const energyBefore = 0.5 * mass1 * velocity1 ** 2 + 0.5 * mass2 * velocity2 ** 2;
 
@@ -147,25 +143,22 @@ document.getElementById("simulate").addEventListener("click", async () => {
     const momentumAfter = mass1 * velocity1After + mass2 * velocity2After;
     energyAfter = 0.5 * mass1 * velocity1After ** 2 + 0.5 * mass2 * velocity2After ** 2;
 
-    // Update results
     document.getElementById("momentum-before").textContent = momentumBefore.toFixed(2);
     document.getElementById("momentum-after").textContent = momentumAfter.toFixed(2);
     document.getElementById("energy-before").textContent = energyBefore.toFixed(2);
     document.getElementById("energy-after").textContent = energyAfter.toFixed(2);
 
-    // Reward coins if momentum conservation holds
     if (Math.abs(momentumBefore - momentumAfter) < 0.1) {
-        const updatedCoins = await addCoins(userId, 5); // Add coins via MongoDB
-        updateCoinDisplay(updatedCoins); // Update display with new coin total
+        const updatedCoins = await addCoins(userId, 5);
+        updateCoinDisplay(updatedCoins);
     }
 
-    // Visualize collision
     visualizeCollision(mass1, velocity1, mass2, velocity2, collisionType);
 });
 
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const userId = userID; // Replace with the logged-in user's ID from Firebase Auth
-    const coins = await getCoins(userId); // Fetch coins from MongoDB
-    updateCoinDisplay(coins); // Update display
+    const userId = userID;
+    const coins = await getCoins(userId);
+    updateCoinDisplay(coins);
 });
